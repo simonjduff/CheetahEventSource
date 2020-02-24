@@ -7,14 +7,14 @@ namespace CheetahEventSource.InMemory
 {
     public class InMemoryEventStore : IEventStore
     {
-        private readonly Dictionary<int, Event> _events = new Dictionary<int, Event>();
+        private readonly Dictionary<int, CheetahEvent> _events = new Dictionary<int, CheetahEvent>();
 
         public Task SaveAsync(CheetahAggregate entity)
         {
-            foreach (Event e in entity.Events.Where(e => !e.Persisted))
+            // Todo: this will need to clear the uncommitted events somehow
+            foreach (CheetahEvent e in entity._uncommittedEvents.Values)
             {
                 _events.Add(e.Version, e);
-                e.Persist();
             }
 
             return Task.CompletedTask;
